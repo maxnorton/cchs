@@ -121,7 +121,6 @@ append using "CCHS_2010_Annual_pruned.dta" "CCHS_2011-2012_Annual_pruned.dta" //
 	"CCHS_2012_Annual_pruned.dta" "CCHS_2013-2014_Annual_pruned.dta" ///
 	"CCHS_2014_Annual_pruned.dta" "cchs_annual_2015_2016_pruned.dta", gen(wave)
 
-
 * Clean and label 
 label define wave 0 "2009" 1 "2010" 2 "2011" 3 "2012" 4 "2013" 5 "2014" 6 "2015"
 label values wave wave
@@ -133,6 +132,12 @@ label define agegrp 0 "Young" 1 "Midlife" 2 "Old"
 label values age_5yr age_5yr
 label values age_10yr age_10yr
 label values agegrp agegrp
+
+* Recode sex
+gen male = 2 - dhh_sex
+label define male 0 "Female" 1 "Male"
+label values male male
+drop dhh_sex
 
 * Save and remove tempfiles
 compress
