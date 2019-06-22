@@ -12,8 +12,7 @@ File dependencies:
 
 local dtafiles CCHS_2009-2010_Annual CCHS_2010_Annual ///
 		CCHS_2011-2012_Annual CCHS_2012_Annual ///
-		 CCHS_2013-2014_Annual CCHS_2014_Annual
-*		cchs_annual_2015_2016*/
+		 CCHS_2013-2014_Annual CCHS_2014_Annual cchs_annual_2015_2016
 
 * 2012 mental health component requires special pre-treatment
 * then gets appended to 2012 annual component
@@ -25,17 +24,22 @@ rename GEN_02A2 swl
 drop if (swl==.a | swl==.b | swl==.c | swl==.d)
 rename DHHGAGE age_5yr
 gen age_10yr = floor( (age_5yr+1)/2 )
+rename *, lower
 save 2012mh.dta, replace		
 
 * Every other cycle gets a standardize treatment		
 foreach wave of local dtafiles {
-	display "`wave'"
 	use `wave'.dta, clear
-	do data-extract.do
-	if "`wave'" == "CCHS_2012_Annual" {
-		append using 2012mh.dta, gen(component)
-		label define component 0 "Annual" 1 "Mental Health"
-		label values component component
+	if "`wave'" == "cchs_annual_2015_2016" {
+		do data-extract-2015-16.do
+	} 
+	else {
+		do data-extract.do
+		if "`wave'" == "CCHS_2012_Annual" {
+			append using 2012mh.dta, gen(component)
+			label define component 0 "Annual" 1 "Mental Health"
+			label values component component
+		}
 	}
 	save `wave'_pruned.dta, replace
 }
@@ -44,11 +48,11 @@ foreach wave of local dtafiles {
 use CCHS_2009-2010_Annual_pruned.dta, clear
 append using "CCHS_2010_Annual_pruned.dta" "CCHS_2011-2012_Annual_pruned.dta" ///
 	"CCHS_2012_Annual_pruned.dta" "CCHS_2013-2014_Annual_pruned.dta" ///
-	"CCHS_2014_Annual_pruned.dta", gen(wave)
+	"CCHS_2014_Annual_pruned.dta" "cchs_annual_2015_2016_pruned.dta", gen(wave)
 
 
 * Clean and label 
-label define wave 0 "2009" 1 "2010" 2 "2011" 3 "2012" 4 "2013" 5 "2014"
+label define wave 0 "2009" 1 "2010" 2 "2011" 3 "2012" 4 "2013" 5 "2014" 6 "2015"
 label values wave wave
 replace component=0 if component==.
 

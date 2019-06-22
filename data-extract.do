@@ -15,3 +15,5 @@ gen agegrp = 2 if age_10yr > 4
 replace agegrp = 1 if age_10yr == 4
 replace agegrp = 0 if age_10yr < 4
 drop DHHGAGE 
+
+rename *, lower
