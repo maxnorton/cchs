@@ -1,0 +1,96 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}/Users/max/Dropbox/cchs/exploreBelongingNatlOrigin.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}22 Jun 2019, 16:01:26
+
+{com}. sum gen_10 belong_bin sps_01 dependHelp_bin sps_10 dependEmergency_bin 
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 6}gen_10 {c |}{res}    668,959    2.175181     .829824          1          4
+{txt}{space 2}belong_bin {c |}{res}    668,959    .6992133    .4586005          0          1
+{txt}{space 6}sps_01 {c |}{res}    138,712    1.365758     .542412          1          4
+{txt}dependHelp~n {c |}{res}    138,712    .9786031    .1447038          0          1
+{txt}{space 6}sps_10 {c |}{res}    138,339    1.361265    .5149956          1          4
+{txt}{hline 13}{c +}{hline 57}
+dependEmer~n {c |}{res}    138,339    .9874367    .1113804          0          1
+
+{com}. sum gen_10 belong_bin sps_01 dependHelp_bin sps_10 dependEmergency_bin [pw=wts_m]
+{bf}{err}pweight{sf}s not allowed
+{txt}{search r(101), local:r(101);}
+
+{com}. sum gen_10 belong_bin sps_01 dependHelp_bin sps_10 dependEmergency_bin [aw=wts_m]
+
+{txt}    Variable {c |}     Obs      Weight        Mean   Std. Dev.       Min        Max
+{hline 13}{c +}{hline 65}
+{space 6}gen_10 {c |}{res} 668,959   227464404    2.252279   .8363013          1          4
+{txt}{space 2}belong_bin {c |}{res} 668,959   227464404    .6579361   .4744012          0          1
+{txt}{space 6}sps_01 {c |}{res} 138,712  66717861.2    1.346451   .5390121          1          4
+{txt}dependHelp~n {c |}{res} 138,712  66717861.2    .9779072   .1469858          0          1
+{txt}{space 6}sps_10 {c |}{res} 138,339  66585006.4    1.326019   .5021961          1          4
+{txt}{hline 13}{c +}{hline 65}
+dependEmer~n {c |}{res} 138,339  66585006.4     .988225   .1078721          0          1
+
+{com}. label list SDCFIMM
+{txt}SDCFIMM:
+{res}           1 YES
+           2 NO
+
+{com}. sum gen_10 belong_bin sps_01 dependHelp_bin sps_10 dependEmergency_bin if sdcfimm == 2
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 6}gen_10 {c |}{res}    556,887    2.173541    .8246069          1          4
+{txt}{space 2}belong_bin {c |}{res}    556,887    .7002444    .4581512          0          1
+{txt}{space 6}sps_01 {c |}{res}    119,448    1.349014    .5319417          1          4
+{txt}dependHelp~n {c |}{res}    119,448    .9808955    .1368931          0          1
+{txt}{space 6}sps_10 {c |}{res}    119,298    1.348313    .5086209          1          4
+{txt}{hline 13}{c +}{hline 57}
+dependEmer~n {c |}{res}    119,298    .9885245    .1065076          0          1
+
+{com}. sum gen_10 belong_bin sps_01 dependHelp_bin sps_10 dependEmergency_bin if sdcfimm == 1
+
+{txt}    Variable {c |}        Obs        Mean    Std. Dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 6}gen_10 {c |}{res}     94,419    2.182167    .8560449          1          4
+{txt}{space 2}belong_bin {c |}{res}     94,419    .6935998    .4610004          0          1
+{txt}{space 6}sps_01 {c |}{res}     17,882    1.463035    .5884667          1          4
+{txt}dependHelp~n {c |}{res}     17,882    .9656079    .1822393          0          1
+{txt}{space 6}sps_10 {c |}{res}     17,827    1.434061    .5436845          1          4
+{txt}{hline 13}{c +}{hline 57}
+dependEmer~n {c |}{res}     17,827    .9813205    .1353944          0          1
+
+{com}. sum gen_10 belong_bin sps_01 dependHelp_bin sps_10 dependEmergency_bin [aw=wts_m] if sdcfimm == 2
+
+{txt}    Variable {c |}     Obs      Weight        Mean   Std. Dev.       Min        Max
+{hline 13}{c +}{hline 65}
+{space 6}gen_10 {c |}{res} 556,887   168524492    2.265316   .8301796          1          4
+{txt}{space 2}belong_bin {c |}{res} 556,887   168524492    .6509184   .4766802          0          1
+{txt}{space 6}sps_01 {c |}{res} 119,448  52134431.3    1.313618   .5191498          1          4
+{txt}dependHelp~n {c |}{res} 119,448  52134431.3     .981924   .1332269          0          1
+{txt}{space 6}sps_10 {c |}{res} 119,298  52080179.4    1.303052   .4913601          1          4
+{txt}{hline 13}{c +}{hline 65}
+dependEmer~n {c |}{res} 119,298  52080179.4     .989448   .1021797          0          1
+
+{com}. sum gen_10 belong_bin sps_01 dependHelp_bin sps_10 dependEmergency_bin [aw=wts_m] if sdcfimm == 1
+
+{txt}    Variable {c |}     Obs      Weight        Mean   Std. Dev.       Min        Max
+{hline 13}{c +}{hline 65}
+{space 6}gen_10 {c |}{res}  94,419  52452584.4    2.214589   .8527019          1          4
+{txt}{space 2}belong_bin {c |}{res}  94,419  52452584.4    .6770938   .4675897          0          1
+{txt}{space 6}sps_01 {c |}{res}  17,882  13996631.8     1.45932   .5863095          1          4
+{txt}dependHelp~n {c |}{res}  17,882  13996631.8    .9641519   .1859164          0          1
+{txt}{space 6}sps_10 {c |}{res}  17,827  13964278.4    1.403386   .5290092          1          4
+{txt}{hline 13}{c +}{hline 65}
+dependEmer~n {c |}{res}  17,827  13964278.4     .984441    .123765          0          1
+
+{com}. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}/Users/max/Dropbox/cchs/exploreBelongingNatlOrigin.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}22 Jun 2019, 16:07:03
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}
