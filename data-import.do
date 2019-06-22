@@ -7,7 +7,7 @@ File dependencies:
 		CCHS_2012_Annual.dta, CCHS_2013-2014_Annual.dta,
 		CCHS_2014_Annual.dta, cchs_annual_2015_2016.dta 
 	(downloadable on UBC Abacus Dataverse)
-- subscripts: data-extract.do
+- subscripts: none anymore
 */
 
 local dtafiles CCHS_2009-2010_Annual CCHS_2010_Annual ///
@@ -18,28 +18,98 @@ local dtafiles CCHS_2009-2010_Annual CCHS_2010_Annual ///
 * then gets appended to 2012 annual component
 use CCHS_2012_Mental-Health.dta, clear
 rename GEO_PRV GEOGPRV
-keep GEOGPRV DHHGAGE-DHHGMS DHHGLVG GEN_01-GENDHDI INCGHH-SDCGRES SDCGLHM EDUDH04-WTS_M
+keep GEOGPRV DHHGAGE-DHHGMS DHHGLVG GEN_01-GENDHDI INCGHH-SDCGRES SDCGLHM ///
+	EDUDH04-WTS_M SPS_01 SPS_10
 drop GEN_04
 rename GEN_02A2 swl
 drop if (swl==.a | swl==.b | swl==.c | swl==.d)
 rename DHHGAGE age_5yr
-gen age_10yr = floor( (age_5yr+1)/2 )
-rename *, lower
 save 2012mh.dta, replace		
 
 * Every other cycle gets a standardize treatment		
 foreach wave of local dtafiles {
 	use `wave'.dta, clear
 	if "`wave'" == "cchs_annual_2015_2016" {
-		do data-extract-2015-16.do
+		* Satisfaction with life: we're only interested in responders
+		rename gen_010 swl
+		drop if (swl==.a | swl==.b | swl==.c | swl==.d)
+
+		* Backcode variables to prev cycle defns
+		rename geo_prv geogprv
+		replace geogprv=60 if geogprv==61 | geogprv==62
+
+		rename ehg2dvh3 edudh04
+		replace edudh04=4 if edudh04==3
+		 
+
+		* Rename to fit earlier waves, no recoding required
+		rename gen_020 gen_07
+		rename mac_010 gen_08
+		rename gen_025 gen_09
+		rename gen_030 gen_10
+		rename gendvhdi gendhdi 
+		rename gendvmhi gendmhi
+		rename sdcdglhm sdcglhm
+		rename sdcdvimm sdcfimm
+		rename sdcdgres sdcgres
+		rename incdghh incghh
+		rename incdgper incgper
+		rename incdvrca incdrca
+		rename incdvrpr incdrpr
+		rename sps_005 sps_01
+		rename sps_050 sps_10
+
+
+		* Prune
+		keep geogprv dhh_sex dhhgms dhhdglvg dhhgage gen_07 gen_08 gen_09 gen_10  ///
+			gendhdi gendmhi edudh04 sdcglhm sdcfimm sdcgres incghh incgper incdrca ///
+			incdrpr sps_01 sps_10 wts_m
+
+		* Build age groups
+		gen age_5yr = 0 if dhhgage==1
+		replace age_5yr=1 if (dhhgage==2 | dhhgage==3)
+		replace age_5yr=dhhgage-2 if dhhgage>3
+		gen age_10yr = floor( (age_5yr+1)/2 )
+		gen agegrp = 2 if age_10yr > 4
+		replace agegrp = 1 if age_10yr == 4
+		replace agegrp = 0 if age_10yr < 4
+		drop dhhgage 
 	} 
 	else {
-		do data-extract.do
+		* Satisfaction with life: we're only interested in responders
+		rename GEN_02A2 swl
+		drop if (swl==.a | swl==.b | swl==.c | swl==.d)
+
+		* Prune
+		if "`wave'" == "CCHS_2009-2010_Annual" | "`wave'" == "CCHS_2010_Annual" {
+			keep GEOGPRV DHHGAGE-DHHGMS DHHGLVG GEN_01-GENDMHI SDCGLHM-SDCGRES ///
+				EDUDH04-EDUDR04 INCGHH-WTS_M 
+		}
+		else {
+			keep GEOGPRV DHHGAGE-DHHGMS DHHGLVG GEN_01-GENDMHI SDCGLHM-SDCGRES ///
+				EDUDH04-EDUDR04 INCGHH-WTS_M SPS_01 SPS_10
+		}
+		drop INCDRRS
+
+		* Build age groups
+		gen age_5yr = 0 if DHHGAGE==1
+		replace age_5yr=1 if (DHHGAGE==2 | DHHGAGE==3)
+		replace age_5yr=DHHGAGE-2 if DHHGAGE>3
+		
 		if "`wave'" == "CCHS_2012_Annual" {
 			append using 2012mh.dta, gen(component)
 			label define component 0 "Annual" 1 "Mental Health"
 			label values component component
 		}
+		
+		gen age_10yr = floor( (age_5yr+1)/2 )
+		gen agegrp = 2 if age_10yr > 4
+		replace agegrp = 1 if age_10yr == 4
+		replace agegrp = 0 if age_10yr < 4
+		drop DHHGAGE 
+		
+		rename *, lower
+
 	}
 	save `wave'_pruned.dta, replace
 }
