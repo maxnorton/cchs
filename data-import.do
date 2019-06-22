@@ -10,14 +10,14 @@ File dependencies:
 - subscripts: data-extract.do
 */
 
-local dtafiles CCHS_2009-2010_Annual.dta CCHS_2010_Annual.dta ///
-		CCHS_2011-2012_Annual.dta CCHS_2012_Annual.dta ///
-		 CCHS_2013-2014_Annual.dta CCHS_2014_Annual.dta
-*		cchs_annual_2015_2016.dta
+local dtafiles CCHS_2009-2010_Annual CCHS_2010_Annual ///
+		CCHS_2011-2012_Annual CCHS_2012_Annual ///
+		 CCHS_2013-2014_Annual CCHS_2014_Annual
+*		cchs_annual_2015_2016*/
 
 * 2012 mental health component requires special pre-treatment
 * then gets appended to 2012 annual component
-use CCHS_2012_Mental-Health.dta
+use CCHS_2012_Mental-Health.dta, clear
 rename GEO_PRV GEOGPRV
 keep GEOGPRV DHHGAGE-DHHGMS DHHGLVG GEN_01-GENDHDI INCGHH-SDCGRES SDCGLHM EDUDH04-WTS_M
 drop GEN_04
@@ -29,9 +29,10 @@ save 2012mh.dta, replace
 
 * Every other cycle gets a standardize treatment		
 foreach wave of local dtafiles {
-	use wave, clear
+	display "`wave'"
+	use `wave'.dta, clear
 	do data-extract.do
-	if wave == "CCHS_2012_Annual.dta" {
+	if "`wave'" == "CCHS_2012_Annual" {
 		append using 2012mh.dta, gen(component)
 		label define component 0 "Annual" 1 "Mental Health"
 		label values component component
@@ -40,7 +41,7 @@ foreach wave of local dtafiles {
 }
 
 * Merge cycles
-use CCHS_2009-2010_Annual_pruned.dta
+use CCHS_2009-2010_Annual_pruned.dta, clear
 append using "CCHS_2010_Annual_pruned.dta" "CCHS_2011-2012_Annual_pruned.dta" ///
 	"CCHS_2012_Annual_pruned.dta" "CCHS_2013-2014_Annual_pruned.dta" ///
 	"CCHS_2014_Annual_pruned.dta", gen(wave)
@@ -61,6 +62,7 @@ label values agegrp agegrp
 * Save and remove tempfiles
 compress
 save cchs.dta, replace
-rm "CCHS_2009-2010_Annual_pruned.dta" "CCHS_2010_Annual_pruned.dta" ///
-	"CCHS_2011-2012_Annual_pruned.dta" "CCHS_2012_Annual_pruned.dta" ///
-	"CCHS_2013-2014_Annual_pruned.dta" "CCHS_2014_Annual_pruned.dta"
+foreach wave of local dtafiles {
+	rm "`wave'_pruned.dta"
+}
+rm 2012mh.dta
