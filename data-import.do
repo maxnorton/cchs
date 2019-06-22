@@ -139,6 +139,19 @@ label define male 0 "Female" 1 "Male"
 label values male male
 drop dhh_sex
 
+* Generate binary belonging vars
+gen belong_bin = .
+replace belong_bin = 1 if gen_10==1 | gen_10==2
+replace belong_bin = 0 if gen_10==3 | gen_10==4
+
+gen dependHelp_bin = .
+replace dependHelp_bin = 1 if sps_01==1 | sps_01==2
+replace dependHelp_bin = 0 if sps_01==3 | sps_01==4
+
+gen dependEmergency_bin = .
+replace dependEmergency_bin = 1 if sps_10==1 | sps_10==2
+replace dependEmergency_bin = 0 if sps_10==3 | sps_10==4
+
 * Save and remove tempfiles
 compress
 save cchs.dta, replace
