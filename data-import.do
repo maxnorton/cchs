@@ -58,10 +58,11 @@ foreach wave of local dtafiles {
 		rename incdvrpr incdrpr
 		rename sps_005 sps_01
 		rename sps_050 sps_10
+		rename dhhdglvg dhhglvg
 
 
 		* Prune
-		keep geogprv dhh_sex dhhgms dhhdglvg dhhgage gen_07 gen_08 gen_09 gen_10  ///
+		keep geogprv dhh_sex dhhgms dhhglvg dhhgage gen_07 gen_08 gen_09 gen_10  ///
 			gendhdi gendmhi edudh04 sdcglhm sdcfimm sdcgres incghh incgper incdrca ///
 			incdrpr sps_01 sps_10 wts_m
 
@@ -140,3 +141,4 @@ foreach wave of local dtafiles {
 	rm "`wave'_pruned.dta"
 }
 rm 2012mh.dta
+
